@@ -10,6 +10,8 @@ public class Product {
 
     private Campaign campaign;
 
+    private Merchant merchant;
+
     public Product(String image,
                    double price,
                    String title,
@@ -17,10 +19,10 @@ public class Product {
                    String description,
                    double advertisementFee,
                    boolean availability,
-                   Campaign campaign) {
+                   Merchant merchant) {
 
-        if (campaign == null) {
-            throw new IllegalArgumentException("Product must belong to a Campaign (multiplicity 1..1)");
+        if (merchant == null) {
+            throw new IllegalArgumentException("Product must belong to a Merchant (composition)");
         }
 
         this.image = image;
@@ -31,7 +33,8 @@ public class Product {
         this.advertisementFee = advertisementFee;
         this.availability = availability;
 
-        campaign.addProduct(this);
+        this.merchant=merchant;
+        merchant.addExistingProduct(this);
     }
 
     public Campaign getCampaign() {
@@ -47,7 +50,15 @@ public class Product {
             throw new IllegalArgumentException("Product must always belong to a campaign");
         }
 
-        if (this.campaign == newCampaign) return;
+        if (this.campaign == null) {
+            newCampaign.addProduct(this);
+            return;
+        }
+
+
+        if (this.campaign == newCampaign) {
+            return;
+        }
 
         this.campaign.removeProduct(this);
         newCampaign.addProduct(this);
@@ -55,5 +66,13 @@ public class Product {
 
     public double getAdvertisementFee() {
         return advertisementFee;
+    }
+
+    public void changeMerchant(Merchant newMerchant) {
+        throw new UnsupportedOperationException("Cannot reassign Product to another Merchant in composition");
+    }
+
+    public void internalDelete() {
+        this.merchant = null;
     }
 }

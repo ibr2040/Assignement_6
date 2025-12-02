@@ -11,7 +11,7 @@ public class Campaign {
 
     public Campaign(String nameOfCampaign, int pricePerInteraction, String budget) {
         if (nameOfCampaign==null || nameOfCampaign.isBlank()){
-            throw new IllegalArgumentException("Campagaing name cannot be null");
+            throw new IllegalArgumentException("Campaign name cannot be null");
         }
         this.nameOfCampaign = nameOfCampaign;
         this.pricePerInteraction = pricePerInteraction;
@@ -19,13 +19,16 @@ public class Campaign {
     }
 
     public void removeProduct(Product product) {
-        if (product == null) return;
+        if (product == null) {
+            return;
+        }
 
         if (!products.contains(product)) {
             throw new IllegalStateException("Product not found in this campaign");
         }
 
-        throw new IllegalStateException("Product must always belong to exactly 1 Campaign");
+        products.remove(product);
+        product.setCampaignInternal(null);
     }
 
     public void addProduct(Product product){
