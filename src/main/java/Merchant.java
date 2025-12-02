@@ -9,6 +9,7 @@ public class Merchant {
     public Merchant(String bankAccountNumber) {
         if (bankAccountNumber==null||bankAccountNumber.isBlank()){
             throw new IllegalArgumentException("Bank account cannot be empty");
+
         }
         this.bankAccountNumber = bankAccountNumber;
     }
