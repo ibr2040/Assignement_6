@@ -46,6 +46,7 @@ class MerchantTest {
         assertThrows(IllegalStateException.class, () -> m.addExistingProduct(p));
     }
 
+
     @Test
     void testCannotAddExistingProductBelongingToAnotherMerchant() {
         Merchant m1 = new Merchant("11111");
