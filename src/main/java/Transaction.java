@@ -54,9 +54,27 @@ public class Transaction {
         child.setParent(null);
     }
 
-    public void setParent(Transaction parent) {
-        this.parent = parent;
+    public void setParent(Transaction newParent) {
+        if (newParent == this)
+            throw new IllegalStateException("Transaction cannot be its own parent");
+
+        if (newParent != null && newParent.isAncestor(this))
+            throw new IllegalStateException("Cycle detected in reflexive association");
+
+        if (this.parent == newParent)
+            return;
+
+        if (this.parent != null) {
+            this.parent.children.remove(this);
+        }
+
+        this.parent = newParent;
+
+        if (newParent != null && !newParent.children.contains(this)) {
+            newParent.children.add(this);
+        }
     }
+
 
     public Transaction getParent() {
         return parent;
