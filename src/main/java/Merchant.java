@@ -33,6 +33,11 @@ public class Merchant {
             throw new IllegalStateException("Product already belongs to another merchant");
         }
 
+        if (product.isCompositionProduct()) {
+            throw new IllegalStateException("This product cannot be removed individually because it is permanently linked to this merchant."
+            );
+        }
+
         product.setMerchant(this);
         products.add(product);
     }
@@ -46,8 +51,21 @@ public class Merchant {
             throw new IllegalArgumentException("This product does not belong to this merchant");
         }
 
+        if (product.isCompositionProduct()) {
+            throw new UnsupportedOperationException(
+                    "Cannot remove a composition product individually."
+            );
+        }
+
         product.removeMerchant();
         products.remove(product);
+    }
+
+    public void deleteMerchant(){
+        for(Product p:new ArrayList<>(products)){
+            p.internalDestroy();
+        }
+        products.clear();
     }
 
     public List<Product> getProducts() {

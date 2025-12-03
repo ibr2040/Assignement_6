@@ -1,14 +1,17 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+enum Status{
+    FAILED,
+    SUCCESSFUL,
+    WAITS
+}
 public class Transaction {
     private String receiverBankInformation;
     private String payerInformation;
     private double value;
     private String currency;
-    private Enum<?> status;
     private LocalDate dateOfTransaction;
 
     private Transaction parent;
@@ -35,7 +38,7 @@ public class Transaction {
             throw new IllegalStateException("This child is already connected");
 
         if (child.getParent() != null)
-            throw new IllegalStateException("Child already has a parent (must be 0..1)");
+            throw new IllegalStateException("This transaction already has a parent and cannot be reassigned.");
 
         if (isAncestor(child))
             throw new IllegalStateException("Cycle detected in reflexive association");
@@ -55,14 +58,17 @@ public class Transaction {
     }
 
     public void setParent(Transaction newParent) {
-        if (newParent == this)
+        if (newParent == this) {
             throw new IllegalStateException("Transaction cannot be its own parent");
+        }
 
-        if (newParent != null && newParent.isAncestor(this))
+        if (newParent != null && newParent.isAncestor(this)) {
             throw new IllegalStateException("Cycle detected in reflexive association");
+        }
 
-        if (this.parent == newParent)
+        if (this.parent == newParent) {
             return;
+        }
 
         if (this.parent != null) {
             this.parent.children.remove(this);
@@ -90,7 +96,7 @@ public class Transaction {
             if (current == candidate){
                 return true;
             }
-            current = current.getParent();
+            current = current.parent;
         }
         return false;
     }
@@ -109,10 +115,6 @@ public class Transaction {
 
     public String getCurrency() {
         return currency;
-    }
-
-    public Enum<?> getStatus() {
-        return status;
     }
 
     public LocalDate getDateOfTransaction() {

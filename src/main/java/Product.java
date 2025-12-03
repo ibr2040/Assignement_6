@@ -12,6 +12,7 @@ public class Product {
 
     private Merchant merchant;
 
+    private final boolean isCompositionProduct;
 
     public Product(Merchant merchant, String title, double price) {
         if (merchant == null)
@@ -20,18 +21,20 @@ public class Product {
         if (title == null || title.isBlank())
             throw new IllegalArgumentException("Title cannot be empty");
 
+        this.isCompositionProduct=true;
         this.merchant = merchant;
         this.title = title;
         this.price = price;
     }
 
     public Product(String title, double price) {
-        if (title == null || title.isBlank())
+        if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
+        }
 
         this.title = title;
         this.price = price;
-
+        this.isCompositionProduct=false;
     }
 
     public void setCampaign(Campaign campaign) {
@@ -39,6 +42,10 @@ public class Product {
             throw new IllegalStateException("Product already assigned to a campaign. Use campaign.removeProduct() first.");
         }
         this.campaign = campaign;
+    }
+
+    public boolean isCompositionProduct() {
+        return isCompositionProduct;
     }
 
     public void removeCampaign(){
@@ -49,18 +56,31 @@ public class Product {
         return campaign;
     }
 
-    public void setMerchant(Merchant merchant){
-        this.merchant=merchant;
+    public void setMerchant(Merchant merchant) {
+        if (isCompositionProduct) {
+            throw new UnsupportedOperationException(
+                    "This product is already assigned to a merchant and cannot be reassigned."
+            );
+        }
+        this.merchant = merchant;
     }
 
-    public void removeMerchant(){
-        this.merchant=null;
+    public void removeMerchant() {
+        if (isCompositionProduct) {
+            throw new UnsupportedOperationException(
+                    "This product must always remain linked to its merchant and cannot be detached."            );
+        }
+        this.merchant = null;
     }
 
     public Merchant getMerchant(){
         return merchant;
     }
 
+    public void internalDestroy(){
+        this.merchant=null;
+        this.campaign=null;
+    }
 
 
     public String getImage() {

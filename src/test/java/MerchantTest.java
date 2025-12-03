@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MerchantTest {
+
     @Test
     void testCreateProductCreatesReverseConnection() {
         Merchant m = new Merchant("12345");
@@ -28,7 +29,7 @@ class MerchantTest {
     void testAddExistingProductCreatesReverseConnection() {
         Merchant m = new Merchant("11111");
 
-        Product p = new Product("Camera", 300);
+        Product p = new Product("Camera", 300); // NON–composition constructor
 
         m.addExistingProduct(p);
 
@@ -40,7 +41,7 @@ class MerchantTest {
     void testCannotAddExistingProductThatAlreadyBelongsToMerchant() {
         Merchant m = new Merchant("11111");
 
-        Product p = m.createProduct("Monitor", 200);
+        Product p = m.createProduct("Monitor", 200); // composition product
 
         assertThrows(IllegalStateException.class, () -> m.addExistingProduct(p));
     }
@@ -50,7 +51,7 @@ class MerchantTest {
         Merchant m1 = new Merchant("11111");
         Merchant m2 = new Merchant("22222");
 
-        Product p = m1.createProduct("Router", 150);
+        Product p = m1.createProduct("Router", 150); // part of m1
 
         assertThrows(IllegalStateException.class, () -> m2.addExistingProduct(p));
     }
@@ -61,15 +62,13 @@ class MerchantTest {
 
         assertThrows(IllegalArgumentException.class, () -> m.addExistingProduct(null));
     }
+
     @Test
-    void testRemoveProductRemovesReverseConnection() {
+    void testCannotRemoveCompositionProductIndividually() {
         Merchant m = new Merchant("33333");
         Product p = m.createProduct("Keyboard", 50);
 
-        m.removeProduct(p);
-
-        assertNull(p.getMerchant());
-        assertFalse(m.getProducts().contains(p));
+        assertThrows(UnsupportedOperationException.class, () -> m.removeProduct(p));
     }
 
     @Test
@@ -109,5 +108,19 @@ class MerchantTest {
         var list = m.getProducts();
 
         assertThrows(UnsupportedOperationException.class, list::clear);
+    }
+
+
+    @Test
+    void testDeletingMerchantDeletesAllProducts() {
+        Merchant m = new Merchant("90909");
+        Product p1 = m.createProduct("A", 10);
+        Product p2 = m.createProduct("B", 20);
+
+        m.deleteMerchant();
+
+        assertNull(p1.getMerchant());
+        assertNull(p2.getMerchant());
+        assertTrue(m.getProducts().isEmpty());
     }
 }

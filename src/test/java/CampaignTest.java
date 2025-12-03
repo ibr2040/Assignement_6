@@ -100,7 +100,6 @@ class CampaignTest {
 
         assertThrows(UnsupportedOperationException.class, list::clear);
 
-        // убедиться что внутри список НЕ изменился
         assertEquals(1, c.getProducts().size());
         assertEquals(p, c.getProducts().get(0));
     }
