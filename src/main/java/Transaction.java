@@ -1,88 +1,103 @@
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-
-enum Status {
-    FAILED,
-    SUCCESSEFUL,
-    WAITS
-}
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Transaction {
     private String receiverBankInformation;
     private String payerInformation;
     private double value;
     private String currency;
-    private Status status;
+    private Enum<?> status;
     private LocalDate dateOfTransaction;
 
-    private Transaction processedBy;
-    private Set<Transaction> processedTransaction=new HashSet<>();
+    private Transaction parent;
 
-    public Transaction(String receiverBankInformation, String payerInformation, double value, String currency, Status status, LocalDate dateOfTransaction) {
-        this.receiverBankInformation = receiverBankInformation;
-        this.payerInformation = payerInformation;
+    private final List<Transaction> children=new ArrayList<>();
+
+    public Transaction(String receiver, String payer, double value, String currency) {
+        this.receiverBankInformation = receiver;
+        this.payerInformation = payer;
         this.value = value;
         this.currency = currency;
-        this.status = status;
-        this.dateOfTransaction = dateOfTransaction;
-
+        this.dateOfTransaction = LocalDate.now();
     }
 
-    public Transaction getProcessedBy() {
-        return processedBy;
-    }
+    public void addChild(Transaction child) {
 
-    public Set<Transaction> getProcessedTransaction() {
-        return processedTransaction;
-    }
-
-    public void setProcessedBy(Transaction parent){
-        if (parent==this){
-            throw new IllegalArgumentException("Transaction cannot process itself");
-        }
-
-        if (this.processedBy==parent){
-            return;
-        }
-
-        if(this.processedBy!=null){
-            this.processedBy.processedTransaction.remove(this);
-        }
-
-        if (parent!=null){
-            if (parent.processedTransaction.contains(this)){
-                throw new IllegalStateException("Duplicate processed transaction");
-            }
-            parent.processedTransaction.add(this);
-        }
-    }
-
-    public void addProcessedTransaction(Transaction child) {
-        if (child == null) {
+        if (child == null)
             throw new IllegalArgumentException("Child transaction cannot be null");
-        }
 
-        if (child == this) {
-            throw new IllegalArgumentException("Transaction cannot process itself");
-        }
+        if (child == this)
+            throw new IllegalStateException("Transaction cannot be child of itself");
 
-        if (processedTransaction.contains(child)) {
-            throw new IllegalStateException("This transaction already processes the given transaction");
-        }
+        if (children.contains(child))
+            throw new IllegalStateException("This child is already connected");
 
-        processedTransaction.add(child);
-        child.setProcessedBy(this);
+        if (child.getParent() != null)
+            throw new IllegalStateException("Child already has a parent (must be 0..1)");
+
+        if (isAncestor(child))
+            throw new IllegalStateException("Cycle detected in reflexive association");
+
+        children.add(child);
+
+        child.setParent(this);
     }
 
-    public void removeProcessedTransaction(Transaction child) {
-        if (child == null) return;
+    public void removeChild(Transaction child) {
+        if (!children.contains(child))
+            throw new IllegalArgumentException("Child not found in this parent");
 
-        if (!processedTransaction.contains(child)) {
-            throw new IllegalStateException("Transaction not found in processed list");
+        children.remove(child);
+
+        child.setParent(null);
+    }
+
+    public void setParent(Transaction parent) {
+        this.parent = parent;
+    }
+
+    public Transaction getParent() {
+        return parent;
+    }
+
+    public List<Transaction> getChildren() {
+        return new ArrayList<>(children);
+    }
+
+    private boolean isAncestor(Transaction candidate) {
+        Transaction current = this;
+        while (current != null) {
+            if (current == candidate){
+                return true;
+            }
+            current = current.getParent();
         }
+        return false;
+    }
 
-        processedTransaction.remove(child);
-        child.processedBy = null;
+    public String getReceiverBankInformation() {
+        return receiverBankInformation;
+    }
+
+    public String getPayerInformation() {
+        return payerInformation;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public Enum<?> getStatus() {
+        return status;
+    }
+
+    public LocalDate getDateOfTransaction() {
+        return dateOfTransaction;
     }
 }

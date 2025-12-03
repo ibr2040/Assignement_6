@@ -1,47 +1,60 @@
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class Merchant {
     private String bankAccountNumber;
-    private Set<Product> products=new HashSet<>();
+
+    private final List<Product> products=new ArrayList<>();
 
     public Merchant(String bankAccountNumber) {
-        if (bankAccountNumber==null||bankAccountNumber.isBlank()){
-            throw new IllegalArgumentException("Bank account cannot be empty");
-
+        if (bankAccountNumber == null || bankAccountNumber.isBlank()) {
+            throw new IllegalArgumentException("Bank account number cannot be empty");
         }
         this.bankAccountNumber = bankAccountNumber;
     }
 
-    public Product createProduct(String image,
-                                 double price,
-                                 String title,
-                                 String category,
-                                 String description,
-                                 double advertisementFee,
-                                 boolean availability) {
-
-        return new Product(image, price, title, category, description,
-                advertisementFee, availability, this);
+    public Product createProduct(String title,double price){
+        Product p=new Product(this,title,price);
+        products.add(p);
+        return p;
     }
 
     public void addExistingProduct(Product product) {
         if (product == null) {
             throw new IllegalArgumentException("Cannot add null product");
         }
+
+        if (products.contains(product)) {
+            throw new IllegalStateException("Product already belongs to this merchant");
+        }
+
+        if (product.getMerchant() != null) {
+            throw new IllegalStateException("Product already belongs to another merchant");
+        }
+
+        product.setMerchant(this);
         products.add(product);
     }
 
+    public void removeProduct (Product product){
+        if (product == null) {
+            throw new IllegalArgumentException("Cannot remove null product");
+        }
 
-    public Set<Product> getProducts() {
-        return Collections.unmodifiableSet(products);
+        if (!products.contains(product)) {
+            throw new IllegalArgumentException("This product does not belong to this merchant");
+        }
+
+        product.removeMerchant();
+        products.remove(product);
     }
 
-    public void deleteMerchant() {
-        for (Product p : products) {
-            p.internalDelete();
-        }
-        products.clear();
+    public List<Product> getProducts() {
+        return Collections.unmodifiableList(products);
+    }
+
+    public String getBankAccountNumber () {
+        return bankAccountNumber;
     }
 }

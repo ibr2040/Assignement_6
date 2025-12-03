@@ -12,67 +12,79 @@ public class Product {
 
     private Merchant merchant;
 
-    public Product(String image,
-                   double price,
-                   String title,
-                   String category,
-                   String description,
-                   double advertisementFee,
-                   boolean availability,
-                   Merchant merchant) {
 
-        if (merchant == null) {
-            throw new IllegalArgumentException("Product must belong to a Merchant (composition)");
-        }
+    public Product(Merchant merchant, String title, double price) {
+        if (merchant == null)
+            throw new IllegalArgumentException("Merchant cannot be null for composition constructor");
 
-        this.image = image;
-        this.price = price;
+        if (title == null || title.isBlank())
+            throw new IllegalArgumentException("Title cannot be empty");
+
+        this.merchant = merchant;
         this.title = title;
-        this.category = category;
-        this.description = description;
-        this.advertisementFee = advertisementFee;
-        this.availability = availability;
+        this.price = price;
+    }
 
-        this.merchant=merchant;
-        merchant.addExistingProduct(this);
+    public Product(String title, double price) {
+        if (title == null || title.isBlank())
+            throw new IllegalArgumentException("Title cannot be empty");
+
+        this.title = title;
+        this.price = price;
+
+    }
+
+    public void setCampaign(Campaign campaign) {
+        this.campaign = campaign;
+    }
+
+    public void removeCampaign(){
+        this.campaign=null;
     }
 
     public Campaign getCampaign() {
         return campaign;
     }
 
-    public void setCampaignInternal(Campaign campaign) {
-        this.campaign = campaign;
+    public void setMerchant(Merchant merchant){
+        this.merchant=merchant;
     }
 
-    public void changeCampaign(Campaign newCampaign) {
-        if (newCampaign == null) {
-            throw new IllegalArgumentException("Product must always belong to a campaign");
-        }
+    public void removeMerchant(){
+        this.merchant=null;
+    }
 
-        if (this.campaign == null) {
-            newCampaign.addProduct(this);
-            return;
-        }
+    public Merchant getMerchant(){
+        return merchant;
+    }
 
 
-        if (this.campaign == newCampaign) {
-            return;
-        }
 
-        this.campaign.removeProduct(this);
-        newCampaign.addProduct(this);
+    public String getImage() {
+        return image;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public double getAdvertisementFee() {
         return advertisementFee;
     }
 
-    public void changeMerchant(Merchant newMerchant) {
-        throw new UnsupportedOperationException("Cannot reassign Product to another Merchant in composition");
-    }
-
-    public void internalDelete() {
-        this.merchant = null;
+    public boolean isAvailability() {
+        return availability;
     }
 }
