@@ -35,6 +35,9 @@ public class Product {
     }
 
     public void setCampaign(Campaign campaign) {
+        if (this.campaign != null && campaign != null) {
+            throw new IllegalStateException("Product already assigned to a campaign. Use campaign.removeProduct() first.");
+        }
         this.campaign = campaign;
     }
 
@@ -87,5 +90,6 @@ public class Product {
     public boolean isAvailability() {
         return availability;
     }
+
 }
 

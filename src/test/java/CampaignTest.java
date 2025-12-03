@@ -92,13 +92,15 @@ class CampaignTest {
     }
 
     @Test
-    void testGetProductsReturnsCopy() {
+    void testGetProductsReturnsUnmodifiableList() {
         Product p = new Product("Laptop", 1200);
         Campaign c = new Campaign("TechSale", List.of(p));
 
         List<Product> list = c.getProducts();
-        list.clear();
 
+        assertThrows(UnsupportedOperationException.class, list::clear);
+
+        // убедиться что внутри список НЕ изменился
         assertEquals(1, c.getProducts().size());
         assertEquals(p, c.getProducts().get(0));
     }

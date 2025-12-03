@@ -54,7 +54,7 @@ public class Campaign {
     }
 
     public List<Product> getProducts() {
-        return new ArrayList<>(products);
+        return Collections.unmodifiableList(products);
     }
 
 }
