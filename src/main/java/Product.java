@@ -1,3 +1,5 @@
+import java.util.HashSet;
+
 public class Product {
 
     private String image;
@@ -8,6 +10,7 @@ public class Product {
     private double advertisementFee;
     private boolean availability;
 
+    private HashSet<Cart> cartsContainingProduct = new HashSet<>();
 
     private Campaign campaign;
 
@@ -23,7 +26,6 @@ public class Product {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
         }
-
         this.isCompositionProduct=true;
         this.merchant = merchant;
         this.title = title;
@@ -38,6 +40,16 @@ public class Product {
         this.title = title;
         this.price = price;
         this.isCompositionProduct=false;
+    }
+    public void addToCart(Cart cart){
+        if (cartsContainingProduct.contains(cart)||cart==null){return;}
+        cartsContainingProduct.add(cart);
+        cart.addProduct(this);
+    }
+    public void removeFromCart(Cart cart){
+        if(!cartsContainingProduct.contains(cart)||cart==null){return;}
+        cartsContainingProduct.remove(cart);
+        cart.removeProduct(this);
     }
 
     public void setCampaign(Campaign campaign) {
@@ -113,5 +125,8 @@ public class Product {
         return availability;
     }
 
+    public HashSet<Cart> getCartsContainingProduct() {
+        return cartsContainingProduct;
+    }
 }
 
