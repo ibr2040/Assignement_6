@@ -8,6 +8,7 @@ public class Product {
     private double advertisementFee;
     private boolean availability;
 
+
     private Campaign campaign;
 
     private Merchant merchant;
