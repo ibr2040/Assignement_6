@@ -21,12 +21,11 @@ class CampaignTest {
     }
 
     @Test
-    void testAddProductCreatesReverseConnection() {
+    void testReverseConnectionCreatedOnAdd() {
         Product p1 = new Product("Laptop", 1200);
-        Product p2 = new Product("Mouse", 30);
+        Product p2 = new Product("Mouse", 20);
 
         Campaign c = new Campaign("TechSale", List.of(p1));
-
         c.addProduct(p2);
 
         assertEquals(c, p2.getCampaign());
@@ -50,22 +49,20 @@ class CampaignTest {
     }
 
     @Test
-    void testCannotAddProductThatAlreadyBelongsToAnotherCampaign() {
+    void testProductCannotBelongToTwoCampaigns() {
         Product p = new Product("Speaker", 200);
-
         Campaign c1 = new Campaign("MusicSale", List.of(p));
-        Campaign c2 = new Campaign("BlackFriday", List.of(new Product("Phone", 900)));
+        Campaign c2 = new Campaign("BlackFriday", List.of(new Product("TV", 500)));
 
         assertThrows(IllegalStateException.class, () -> c2.addProduct(p));
     }
 
     @Test
-    void testRemoveProductRemovesReverseConnection() {
+    void testReverseConnectionRemovedOnRemove() {
         Product p1 = new Product("Laptop", 1200);
-        Product p2 = new Product("Mouse", 30);
+        Product p2 = new Product("Mouse", 20);
 
         Campaign c = new Campaign("TechSale", List.of(p1, p2));
-
         c.removeProduct(p1);
 
         assertNull(p1.getCampaign());

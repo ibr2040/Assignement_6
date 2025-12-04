@@ -15,11 +15,13 @@ public class Product {
     private final boolean isCompositionProduct;
 
     public Product(Merchant merchant, String title, double price) {
-        if (merchant == null)
+        if (merchant == null) {
             throw new IllegalArgumentException("Merchant cannot be null for composition constructor");
+        }
 
-        if (title == null || title.isBlank())
+        if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title cannot be empty");
+        }
 
         this.isCompositionProduct=true;
         this.merchant = merchant;
@@ -39,7 +41,7 @@ public class Product {
 
     public void setCampaign(Campaign campaign) {
         if (this.campaign != null && campaign != null) {
-            throw new IllegalStateException("Product already assigned to a campaign. Use campaign.removeProduct() first.");
+            throw new IllegalStateException("Product already assigned to a campaign");
         }
         this.campaign = campaign;
     }
@@ -68,7 +70,7 @@ public class Product {
     public void removeMerchant() {
         if (isCompositionProduct) {
             throw new UnsupportedOperationException(
-                    "This product must always remain linked to its merchant and cannot be detached."            );
+                    "This product must always remain linked to its merchant and cannot be detached.");
         }
         this.merchant = null;
     }
@@ -79,7 +81,6 @@ public class Product {
 
     public void internalDestroy(){
         this.merchant=null;
-        this.campaign=null;
     }
 
 

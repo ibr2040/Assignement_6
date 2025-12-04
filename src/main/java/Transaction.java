@@ -28,20 +28,25 @@ public class Transaction {
 
     public void addChild(Transaction child) {
 
-        if (child == null)
+        if (child == null) {
             throw new IllegalArgumentException("Child transaction cannot be null");
+        }
 
-        if (child == this)
+        if (child == this) {
             throw new IllegalStateException("Transaction cannot be child of itself");
+        }
 
-        if (children.contains(child))
+        if (children.contains(child)) {
             throw new IllegalStateException("This child is already connected");
+        }
 
-        if (child.getParent() != null)
+        if (child.getParent() != null) {
             throw new IllegalStateException("This transaction already has a parent and cannot be reassigned.");
+        }
 
-        if (isAncestor(child))
+        if (isAncestor(child)) {
             throw new IllegalStateException("Cycle detected in reflexive association");
+        }
 
         children.add(child);
 
@@ -49,8 +54,9 @@ public class Transaction {
     }
 
     public void removeChild(Transaction child) {
-        if (!children.contains(child))
+        if (!children.contains(child)) {
             throw new IllegalArgumentException("Child not found in this parent");
+        }
 
         children.remove(child);
 
