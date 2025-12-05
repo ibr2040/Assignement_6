@@ -5,7 +5,7 @@ public class Campaign {
     private int pricePerInteraction;
     private String budget;
 
-    private final List<Product> products=new ArrayList<>();
+    private  List<Product> products=new ArrayList<>();
 
     public Campaign(String nameOfCampaign,List<Product> initialProducts) {
         if (nameOfCampaign == null || nameOfCampaign.isBlank()) {
