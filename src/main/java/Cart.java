@@ -11,7 +11,7 @@ public class Cart implements Serializable {
 
     private List<Product> unavailableProducts=new ArrayList<>();
 
-    private HashSet<Product> ProductsInTheCart=new HashSet<>();
+    private HashSet<ProductsQuantityCart> ProductsQuantityCartList=new HashSet<>();
 
     public static List<Cart> getExtent(){
         return extent;
@@ -44,29 +44,25 @@ public class Cart implements Serializable {
         return unavailableProducts.size();
     }
 
-    public void addProduct(Product p){
+    public void addProduct(ProductsQuantityCart p){
         if (p==null){
             throw new IllegalArgumentException("Product cannot be null");
         }
-        if (p.isAvailability())
-            throw new IllegalArgumentException("Cannot add AVAILABLE product to unavailableProducts");
         if (unavailableProducts.contains(p))
             throw new IllegalArgumentException("Product already in cart");
 
-        if(ProductsInTheCart.contains(p)||p==null){return;}
-        ProductsInTheCart.add(p);
-        p.addToCart(this);
+        if(this.ProductsQuantityCartList.contains(p)||p==null){return;}
+        this.ProductsQuantityCartList.add(p);
     }
-    public void removeProduct(Product p){
-        if (p==null||!this.ProductsInTheCart.contains(p)){return;}
-        ProductsInTheCart.remove(p);
-        p.removeFromCart(this);
+    public void removeProduct(ProductsQuantityCart p){
+        if (p==null||!this.ProductsQuantityCartList.contains(p)){return;}
+        this.ProductsQuantityCartList.remove(p);
+        p.remove();
     }
 
     public void clear(){
-        for(Product p:ProductsInTheCart){
-            ProductsInTheCart.remove(p);
-            p.removeFromCart(this);
+        for(ProductsQuantityCart p:this.ProductsQuantityCartList){
+            this.removeProduct(p);
         }
     }
 
@@ -82,7 +78,7 @@ public class Cart implements Serializable {
     public List<Product> getUnavailableProducts() {
         return unavailableProducts;
     }
-    public HashSet<Product> getProductsInTheCart() {
-        return ProductsInTheCart;
+    public HashSet<ProductsQuantityCart> getProductsInTheCart() {
+        return this.ProductsQuantityCartList;
     }
 }

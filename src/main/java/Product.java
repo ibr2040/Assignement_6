@@ -10,7 +10,7 @@ public class Product {
     private double advertisementFee;
     private boolean availability;
 
-    private HashSet<Cart> cartsContainingProduct = new HashSet<>();
+    private HashSet<ProductsQuantityCart> productQuantityCartList = new HashSet<>();
 
     private Campaign campaign;
 
@@ -41,15 +41,14 @@ public class Product {
         this.price = price;
         this.isCompositionProduct=false;
     }
-    public void addToCart(Cart cart){
-        if (cartsContainingProduct.contains(cart)||cart==null){return;}
-        cartsContainingProduct.add(cart);
-        cart.addProduct(this);
+    public void addToCart(ProductsQuantityCart cart){
+        if (productQuantityCartList.contains(cart)||cart==null){return;}
+        productQuantityCartList.add(cart);
     }
-    public void removeFromCart(Cart cart){
-        if(!cartsContainingProduct.contains(cart)||cart==null){return;}
-        cartsContainingProduct.remove(cart);
-        cart.removeProduct(this);
+    public void removeFromCart(ProductsQuantityCart cart){
+        if(!productQuantityCartList.contains(cart)||cart==null){return;}
+        productQuantityCartList.remove(cart);
+        cart.remove();
     }
 
     public void setCampaign(Campaign campaign) {
@@ -125,8 +124,8 @@ public class Product {
         return availability;
     }
 
-    public HashSet<Cart> getCartsContainingProduct() {
-        return cartsContainingProduct;
+    public HashSet<ProductsQuantityCart> getCartsContainingProduct() {
+        return this.productQuantityCartList;
     }
 }
 
